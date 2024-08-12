@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Escolar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        header {
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 24px;
+        }
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+        }
+        .tab {
+            flex: 1;
+            padding: 10px;
+            cursor: pointer;
+            text-align: center;
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 4px 4px 0 0;
+            margin-right: -1px;
+            box-sizing: border-box;
+        }
+        .tab.active {
+            background-color: white;
+            border-bottom: 1px solid white;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="number"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .chart-container {
+            width: 100%;
+            height: 400px;
+        }
+        canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        .messages {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #f9f9f9;
+        }
+        .message-item {
+            border-bottom: 1px solid #ddd;
+            padding: 10px;
+        }
+        .message-item:last-child {
+            border-bottom: none;
+        }
+        .icon {
+            font-size: 18px;
+            margin-right: 5px;
+            color: #4CAF50;
+        }
+        @media (max-width: 768px) {
+            .tab {
+                flex: 1 1 100%;
+                margin-right: 0;
+                margin-bottom: 1px;
+            }
+            .tabs {
+                flex-direction: column;
+                border-bottom: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <i class="fas fa-school"></i> School innovation
+    </header>
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('professores')">Professores</div>
+            <div class="tab" onclick="showTab('alunos')">Alunos</div>
+            <div class="tab" onclick="showTab('responsaveis')">Responsáveis</div>
+            <div class="tab" onclick="showTab('avaliacoes')">Notas e Avaliações</div>
+            <div class="tab" onclick="showTab('faltas')">Faltas e Presenças</div>
+            <div class="tab" onclick="showTab('avisos')">Avisos e Comunicados</div>
+            <div class="tab" onclick="showTab('agenda')">Agenda Escolar</div>
+            <div class="tab" onclick="showTab('comunicacao')">Comunicação</div>
+            <div class="tab" onclick="showTab('biblioteca')">Biblioteca Digital</div>
+            <div class="tab" onclick="showTab('perfil')">Perfil do Aluno</div>
+        </div>
+        
+        <div id="professores" class="tab-content active">
+            <h2><i class="fas fa-chalkboard-teacher icon"></i>Área do Professor</h2>
+            <div class="form-group">
+                <label for="add-grade-subject"><i class="fas fa-book icon"></i>Disciplina:</label>
+                <input type="text" id="add-grade-subject" placeholder="Digite a disciplina">
+            </div>
+            <div class="form-group">
+                <label for="add-grade"><i class="fas fa-star icon"></i>Nota:</label>
+                <input type="number" id="add-grade" placeholder="Digite a nota" min="0" max="10" step="0.1">
+            </div>
+            <button onclick="addGrade()"><i class="fas fa-plus icon"></i>Adicionar Nota</button>
+            <div class="form-group">
+                <label for="send-notice"><i class="fas fa-bullhorn icon"></i>Aviso:</label>
+                <textarea id="send-notice" rows="4" placeholder="Digite seu aviso"></textarea>
+            </div>
+            <button onclick="sendNotice()"><i class="fas fa-paper-plane icon"></i>Enviar Aviso</button>
+        </div>
+        
+        <div id="alunos" class="tab-content">
+            <h2><i class="fas fa-user-graduate icon"></i>Área do Aluno</h2>
+            <p><strong>Notas:</strong> Visualize suas notas aqui.</p>
+            <p><strong>Faltas:</strong> Veja seu histórico de faltas.</p>
+            <p><strong>Tarefas Pendentes:</strong> Liste suas tarefas pendentes.</p>
+            <p><strong>Mensagens:</strong> Leia mensagens e avisos importantes.</p>
+        </div>
+        
+        <div id="responsaveis" class="tab-content">
+            <h2><i class="fas fa-user-tie icon"></i>Área do Responsável</h2>
+            <p><strong>Desempenho do Aluno:</strong> Acompanhe o desempenho do seu filho.</p>
+            <p><strong>Faltas:</strong> Veja o histórico de faltas.</p>
+            <p><strong>Notificações:</strong> Receba notificações importantes da escola.</p>
+            <p><strong>Comunicação com Professores:</strong> Entre em contato com os professores.</p>
+        </div>
+        
+        <div id="avaliacoes" class="tab-content">
+            <h2><i class="fas fa-chart-line icon"></i>Notas e Avaliações</h2>
+            <div class="form-group">
+                <label for="student-performance"><i class="fas fa-chart-bar icon"></i>Desempenho:</label>
+                <div class="chart-container">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div id="faltas" class="tab-content">
+            <h2><i class="fas fa-calendar-check icon"></i>Faltas e Presenças</h2>
+            <div class="form-group">
+                <label for="record-absence"><i class="fas fa-calendar-day icon"></i>Registrar Falta:</label>
+                <input type="text" id="record-absence" placeholder="Digite a data e o motivo">
+            </div>
+            <button onclick="recordAbsence()"><i class="fas fa-check-circle icon"></i>Registrar</button>
+            <p><strong>Histórico de Presença:</strong> Veja o histórico de presença dos alunos.</p>
+        </div>
+        
+        <div id="avisos" class="tab-content">
+            <h2><i class="fas fa-bullhorn icon"></i>Avisos e Comunicados</h2>
+            <div class="messages">
+                <div class="message-item"><strong>Evento:</strong> Prova de Matemática - 20/08</div>
+                <div class="message-item"><strong>Reunião:</strong> Reunião de Pais - 25/08</div>
+            </div>
+        </div>
+        
+        <div id="agenda" class="tab-content">
+            <h2><i class="fas fa-calendar-alt icon"></i>Agenda Escolar</h2>
+            <p><strong>Calendário:</strong> Veja datas importantes e eventos escolares.</p>
+            <p><strong>Tarefas:</strong> Adicione e gerencie suas tarefas e lembretes.</p>
+        </div>
+        
+        <div id="comunicacao" class="tab-content">
+            <h2><i class="fas fa-comments icon"></i>Comunicação</h2>
+            <p><strong>Mensagens Diretas:</strong> Envie e receba mensagens entre professores, alunos e responsáveis.</p>
+            <p><strong>Fórum de Discussão:</strong> Participe de discussões e tire dúvidas.</p>
+        </div>
+        
+        <div id="biblioteca" class="tab-content">
+            <h2><i class="fas fa-book icon"></i>Biblioteca Digital</h2>
+            <p><strong>Materiais Didáticos:</strong> Baixe apostilas e exercícios.</p>
+            <p><strong>Links Úteis:</strong> Acesse recursos online e materiais educativos.</p>
+        </div>
+        
+        <div id="perfil" class="tab-content">
+            <h2><i class="fas fa-user icon"></i>Perfil do Aluno</h2>
+            <div class="form-group">
+                <label for="update-info"><i class="fas fa-edit icon"></i>Atualizar Informações:</label>
+                <input type="text" id="update-info" placeholder="Atualize suas informações pessoais">
+            </div>
+            <p><strong>Portfólio:</strong> Visualize e adicione trabalhos e projetos realizados.</p>
+        </div>
+    </div>
+
+    <!-- Inclua o Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Função para alternar entre abas
+        function showTab(tabId) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.textContent.toLowerCase() === tabId) {
+                    tab.classList.add('active');
+                }
+            });
+
+            contents.forEach(content => {
+                content.classList.remove('active');
+                if (content.id === tabId) {
+                    content.classList.add('active');
+                }
+            });
+        }
+
+        // Funções de exemplo
+        function addGrade() {
+            alert('Nota adicionada!');
+        }
+
+        function sendNotice() {
+            alert('Aviso enviado!');
+        }
+
+        function recordAbsence() {
+            alert('Falta registrada!');
+        }
+
+        // Inicialização do gráfico
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        const performanceChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Matemática', 'Português', 'Ciências', 'História', 'Geografia'],
+                datasets: [{
+                    label: 'Notas',
+                    data: [8, 7, 9, 6, 7],
+                    backgroundColor: 'rgba(76, 175, 80, 0.5)',
+                    borderColor: 'rgba(76, 175, 80, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Disciplina'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Nota'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
